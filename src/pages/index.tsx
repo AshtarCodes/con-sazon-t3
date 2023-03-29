@@ -13,7 +13,8 @@ import Link from "next/link";
 import { api } from "~/utils/api";
 
 const Home: NextPage = () => {
-  const hello = api.example.hello.useQuery({ text: "from tRPC" });
+  const { data: recipes } = api.recipes.getAll.useQuery();
+  // console.log("DATA !!!!!!!!!! ***********: ", data);
   const user = useUser();
   return (
     <>
@@ -30,6 +31,11 @@ const Home: NextPage = () => {
             </div>
           )}
           {!!user.isSignedIn && <SignOutButton />}
+        </div>
+        <div>
+          {recipes?.map((recipe: any) => (
+            <h3 key={recipe._id}>{recipe.recipeName}</h3>
+          ))}
         </div>
         <SignIn path="/sign-in" routing="path" signUpUrl="/sign-up" />
         <SignUp path="/sign-up" routing="path" signInUrl="/sign-in" />
