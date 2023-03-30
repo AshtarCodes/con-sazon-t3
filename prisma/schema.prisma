@@ -29,7 +29,7 @@ model Recipe {
   path         String?
   author       String
   linkToSource String?
-  image        String?
+  image        String
   cloudinaryId String?
   ingredients  Json[]
   instructions String[]
