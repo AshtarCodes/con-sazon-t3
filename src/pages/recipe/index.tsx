@@ -13,6 +13,6 @@ const RecipeCard = (props: { recipe: Recipe }) => {
         </div>
       </article>
     );
-  };
+};
   
 export default RecipeCard;
