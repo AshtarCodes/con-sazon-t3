@@ -8,7 +8,7 @@
 const config = {
   reactStrictMode: true,
   images: {
-    domains: ['images.clerk.dev', 'res.cloudinary.com']
+    domains: ["images.clerk.dev", "res.cloudinary.com"],
   },
   /**
    * If you have the "experimental: { appDir: true }" setting enabled, then you
@@ -19,6 +19,15 @@ const config = {
   i18n: {
     locales: ["en"],
     defaultLocale: "en",
+  },
+  redirects: async () => {
+    return [
+      {
+        source: "/recipe",
+        destination: "/",
+        permanent: false,
+      },
+    ];
   },
 };
 export default config;

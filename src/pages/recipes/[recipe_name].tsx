@@ -3,6 +3,8 @@ import { NextPage } from "next";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import Header from "~/components/Header";
+import HtmlHead from "~/components/HtmlHead";
+import LoadingPage from "~/components/LoadingPage";
 import { api } from "~/utils/api";
 
 const SingleRecipe: NextPage = () => {
@@ -12,21 +14,23 @@ const SingleRecipe: NextPage = () => {
     console.log(recipe_name);
     return null;
   }
-
   const { data: recipe, isLoading } = api.recipes.getSingle.useQuery({
     text: recipe_name,
   });
-  if (isLoading) return <p>Loading...</p>;
-  else if (!recipe)
+  if (isLoading) return <LoadingPage />;
+  if (!recipe) {
     return <div className="text-center">Woops, something went wrong!</div>;
+  }
 
   const tags = recipe.specialDiet?.split(/[,"]{1}/s) || [];
   recipe.recipeType
     ?.split(/[,"]{1}/)
     .forEach((c) => tags.push(c.replaceAll(/-/g, "‑")));
   const ingredients = recipe.ingredients as Prisma.JsonObject[];
+
   return (
     <>
+      <HtmlHead title={recipe.recipeName} />
       <main className="px-3 py-2">
         <Header></Header>
         <section className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -42,11 +46,16 @@ const SingleRecipe: NextPage = () => {
           <div className="">
             <h1>{recipe.recipeName}</h1>
             <h2>by {recipe.author}</h2>
-            <div className="flex justify-around">
+            <div className="flex justify-start gap-3">
               <button className=" rounded-xl bg-teal-400 px-3 py-1.5">
                 See Original
               </button>
-              <button className=" rounded-xl bg-teal-400 px-3 py-1.5">
+              <button
+                className=" rounded-xl bg-teal-400 px-3 py-1.5"
+                onClick={() => {
+                  router.push("/");
+                }}
+              >
                 Back to all recipes
               </button>
             </div>
@@ -57,11 +66,17 @@ const SingleRecipe: NextPage = () => {
                 <>
                   <p>Tags:</p>
                   <div className="flex flex-wrap justify-start gap-2">
-                    {tags.map((tag) => (
-                      <span className=" inline-block rounded bg-emerald-600 px-1 text-white">
-                        {tag.trim()}
-                      </span>
-                    ))}
+                    {tags.map((tag) => {
+                      tag = tag.trim();
+                      return (
+                        <span
+                          key={tag}
+                          className=" inline-block rounded bg-emerald-600 px-1 text-white"
+                        >
+                          {tag}
+                        </span>
+                      );
+                    })}
                   </div>
                 </>
               )}
@@ -71,14 +86,14 @@ const SingleRecipe: NextPage = () => {
             <h3>Ingredients</h3>
             {ingredients.map((item) => {
               if (typeof item.ingredientRaw === "string") {
-                return <p>{item.ingredientRaw}</p>;
+                return <p key={item.ingredientRaw}>{item.ingredientRaw}</p>;
               }
             })}
           </section>
           <section>
             <h3>Instructions</h3>
             {recipe.instructions.map((str) => {
-              return <p>{str}</p>;
+              return <p key={str}>{str}</p>;
             })}
           </section>
         </section>
